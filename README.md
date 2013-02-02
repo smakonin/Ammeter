@@ -1,4 +1,4 @@
-# Arduino Due Ammeter Library
+# Ammeter Library for Arduino Due
 
 Use Arduino Due to read up to 12 current transformers (CT). One CT per analog pin.
 
