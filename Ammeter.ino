@@ -20,16 +20,17 @@ const byte I2C_ADDRESS = 0x10;
 
 const word CT_COUNT = 4;
 const word CT_MVOLTS = 333;
+const double DC_OFFSET = 0;//33.9;
 const word CT_PINS[] = { 0, 1, 2, 3 };
 const word CT_PRIMARY[] = { 20, 20, -1, -1 };
-const double CT_MVOLTS_PER_AMP[] = { (double)CT_MVOLTS / (double)CT_PRIMARY[0], 
-                                     (double)CT_MVOLTS / (double)CT_PRIMARY[1], 
-                                     (double)CT_MVOLTS / (double)CT_PRIMARY[2], 
-                                     (double)CT_MVOLTS / (double)CT_PRIMARY[3] };
+const double CT_MVOLTS_PER_AMP[] = { (double)CT_MVOLTS / ((double)CT_PRIMARY[0] / 2.0),
+                                     (double)CT_MVOLTS / ((double)CT_PRIMARY[1] / 2.0),
+                                     (double)CT_MVOLTS / ((double)CT_PRIMARY[2] / 2.0),
+                                     (double)CT_MVOLTS / ((double)CT_PRIMARY[3] / 2.0) };
 const word SAMPLE_FREQ = 1000;
 const double REF_MVOLTS = 3380.0;
 const double MAX_ADC_VAL = 4095.0;
-const double I_RATIO = REF_MVOLTS / MAX_ADC_VAL / sqrt(2);
+const double V_RATIO = MAX_ADC_VAL / REF_MVOLTS / sqrt(2) * 100.0;
 
 volatile word sample_idx;
 volatile word ct_samples[CT_COUNT][SAMPLE_FREQ];
@@ -57,7 +58,7 @@ void TC3_Handler()
     ct_totals[i] -= ct_samples[i][sample_idx];
     ct_samples[i][sample_idx] = (CT_PRIMARY[i] == -1) ? 0: analogRead(CT_PINS[i]);
     ct_totals[i] += ct_samples[i][sample_idx];    
-    ct_readings[i] = round((double)ct_totals[i] / (double)SAMPLE_FREQ * I_RATIO / CT_MVOLTS_PER_AMP[i] * 100.0);
+    ct_readings[i] = round((double)ct_totals[i] / (double)SAMPLE_FREQ * V_RATIO / CT_MVOLTS_PER_AMP[i] + DC_OFFSET);
   }
     
   ++sample_idx %= SAMPLE_FREQ;
