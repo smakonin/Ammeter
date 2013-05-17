@@ -1,8 +1,8 @@
 /*******************************************************************************
 *
-*  Ammeter Project for Arduino Due
+*  Precision Ammeter Project for Arduino Due
 *
-*  Coopyright (C) 2013 by Stgephen Makonin, Ryan Dela Cruz, William Sung.
+*  Coopyright (C) 2013 by Stephen Makonin, Ryan Dela Cruz, William Sung.
 *  All rights reserved.
 *
 *  This project is here by released under the:
