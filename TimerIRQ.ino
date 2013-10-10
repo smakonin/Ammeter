@@ -2,7 +2,7 @@
 *
 *  Precision Ammeter Project for Arduino Due
 *
-*  Coopyright (C) 2013 by Stephen Makonin, William Sung, Ryan Dela Cruz.
+*  Coopyright (C) 2013 by Stephen Makonin and contributors.
 *  All rights reserved.
 *
 *  This project is here by released under the:

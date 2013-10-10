@@ -23,27 +23,26 @@ const word CT_COUNT = 4;                            // The number of CTs that ca
 const double CT_MVOLTS = 333.0;                     // The max CT secondary output in mV
 const double REF_MVOLTS = 3300.0;                   // The refernce V of the Due board
 const double MAX_ADC_VAL = 4095.0;                  // The max bits of the ADC, 4095 for 12-bits
-const double FINAL_PRECISION = 1000.0;              // 1000 is milli-Amperes
-const double OPAMP_GAIN = 4.2;                      // The gain of the opamp amplifier adjusted for RMS(3.2 if peak) 
+const double OPAMP_GAIN = 6.9;                      // The gain of the opamp amplifier -- may need to change when calibtating 
                                                     // The max ADC value that the ammeter will ever reach due to rectification, etc.
 const word MAX_RECT_VAL = CT_MVOLTS * OPAMP_GAIN / REF_MVOLTS * MAX_ADC_VAL;
 
 const word CT_PINS[] = { 0, 1, 3, 2 };              // What analog pin is assigned to wich CT
-const word CT_PRIMARY[] = { 20, -1, -1, -1 };    // The CT primary A, -1 means no CT is connected
+const word CT_PRIMARY[] = { 20, -1, -1, -1 };       // The CT primary A, -1 means no CT is connected
 
 volatile word sample_idx;                           // Where in the sampling array are we
 volatile word ct_samples[CT_COUNT][SAMPLE_FREQ];    // Store a number of ADC sample to do averaging
 volatile uint32_t ct_totals[CT_COUNT];              // The sum of the samples array 
-volatile uint32_t ct_readings[CT_COUNT];            // The final mA value, DO NOT ACCESS, use  make_local_copy() and local_copy[]
+volatile float ct_readings[CT_COUNT];               // The final mA value, DO NOT ACCESS, use  make_local_copy() and local_copy[]
 
-uint32_t local_copy[CT_COUNT];                      // A non volitle copy of ct_readings to by used by non-timer code
+float local_copy[CT_COUNT];                         // A non volitle copy of ct_readings to by used by non-timer code
 
 // Makes a safe copy of ct_readings[] which can be uddated at any time by IRQ
 // Call this function then use local_copy[] to seat the final mA values of the CTs
 void make_local_copy()
 {
   noInterrupts();
-  memcpy(local_copy, (const void *)ct_readings, sizeof(uint32_t) * CT_COUNT);
+  memcpy(local_copy, (const void *)ct_readings, sizeof(float) * CT_COUNT);
   interrupts();
 }
 
@@ -74,8 +73,9 @@ void TC3_Handler()
     ct_totals[i] += ct_samples[i][sample_idx];
     double ct_average = (double)ct_totals[i] / (double)SAMPLE_FREQ;
         
-    // Convert ADC value to mA reading
-    ct_readings[i] = round(ct_average * (double)CT_PRIMARY[i] * FINAL_PRECISION / (double)MAX_RECT_VAL);
+    // Convert ADC value to A reading with 1 decimal precision 
+    // for deci-amps anything lower is too noisy.
+    ct_readings[i] = round(ct_average * (double)CT_PRIMARY[i] * 1000.0 / (double)MAX_RECT_VAL / 100.0) / 10.0;
   }
   
   // Incroment index, wrap to 0 when max is reached
@@ -141,7 +141,7 @@ void loop()
       Serial.print(i); 
       Serial.print(": ");   
       Serial.print(local_copy[i]);
-      Serial.print(" mA ");   
+      Serial.print(" A ");   
       Serial.print(" -- ");
     }  
     Serial.println();
@@ -150,4 +150,3 @@ void loop()
     delay(1000);
   }
 }
-

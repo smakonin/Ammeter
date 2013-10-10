@@ -2,7 +2,7 @@
 
 This project is here by released under the [COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL)](https://raw.github.com/smakonin/APMR/master/LICENSE).
 
-Copyright (C) 2013 Stephen Makonin, William Sung, and Ryan Dela Cruz. All rights reserved.
+Copyright (C) 2013 Stephen Makonin and contributors. All rights reserved.
 
 ![Precision Ammeter Shield](https://raw.github.com/smakonin/Ammeter/master/Shield/photo.jpg)
 
