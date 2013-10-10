@@ -1,4 +1,4 @@
-# Precision Ammeter Shield for Arduino Due
+## Precision Ammeter Shield for Arduino Due
 
 This project is here by released under the [COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL)](https://raw.github.com/smakonin/APMR/master/LICENSE).
 
